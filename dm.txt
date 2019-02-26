@@ -1,0 +1,25 @@
+Tabulka vtipy
+-id
+-Nazov/nadpis
+-popisok
+-telo
+-hodnotenie
+-pocet ohodnoteni
+-obrazok
+--autor
+
+Tabulka pouzivatelia
+-email
+-prezyvka
+-heslo
+
+
+Volania:
+-prihlasenie - POST - obsah: username a heslo
+-registracia - POST - obsah: email, nick a heslo
+-pridanie vtipu - POST - obsah: vsetky atributy vtipu (vid. DB tabulka) okrem id
+-uprava anekdoty - POST - obsah: vtip so zmenenymi atributmi
+-detail vtipu - GET - obsah: id vtipu
+-zoznam vtipov - GET - obsah: pripadny filter podla autora
+-ohodnotenie vtipu - POST - obsah: id vtipu a hodnotenie
+
