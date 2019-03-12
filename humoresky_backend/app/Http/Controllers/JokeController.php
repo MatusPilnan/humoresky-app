@@ -44,9 +44,14 @@ class JokeController extends Controller
      * @param  \App\Joke  $joke
      * @return \Illuminate\Http\Response
      */
-    public function show(Joke $joke)
+    public function show(Request $request)
     {
-        //
+        $joke = Joke::find($request->query('joke'));
+        if (is_null($joke)) {
+            return response('Vtip nenajdeny. Isla babka po pusti a padol na nu balkon.', 404);
+        }
+        return response($joke->toJson(), 200, ['Content-Type' => 'application/json']);
+
     }
 
     /**
