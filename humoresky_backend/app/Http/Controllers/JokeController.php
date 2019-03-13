@@ -8,13 +8,29 @@ use Illuminate\Http\Request;
 class JokeController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the jokes.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        $joke = Joke::all()->orderBy('created_at', 'desc')->paginate(10);
+
+        return response($joke->toJson(), 200, ['Content-Type' => 'application/json']);
+
+    }
+
+    /**
+     * Display a listing of personal jokes.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index_personal()
+    {
+        $joke = Joke::all()->where('user_id', '==', Auth::id())->orderBy('created_at', 'desc')->paginate(10);
+        
+        return response($joke->toJson(), 200, ['Content-Type' => 'application/json']);
+
     }
 
     /**
