@@ -18,4 +18,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('/vtip', 'JokeController@show');
-Route::get('/vtip', 'JokeController@index');
+Route::get('/vtipy', 'JokeController@index');
+
+Route::post('/login', 'Auth\ApiLoginController@apiLogin');
