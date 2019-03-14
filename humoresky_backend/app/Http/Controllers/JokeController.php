@@ -62,7 +62,7 @@ class JokeController extends Controller
     {
         $joke = Joke::find($request->query('joke'));
         if (is_null($joke)) {
-            return response('Vtip nenajdeny. Isla babka po pusti a padol na nu balkon.', 404);
+            return response()->json(['message' => 'Vtip nenajdeny.'], 404);
         }
         return response($joke->toJson(), 200, ['Content-Type' => 'application/json']);
 
@@ -100,5 +100,19 @@ class JokeController extends Controller
     public function destroy(Joke $joke)
     {
         //
+    }
+
+    public function rate(Request $request)
+    {
+        if (auth()->user())
+        {
+            $overene = $request->validate([
+                'rating' => 'required|numeric|min:1|max:5'
+            ]);
+
+            return response()->json(['message' => 'Ohodnotene'], 200);
+        }
+
+        return response()->json(['message' => 'Neprihlaseny!'], 401);
     }
 }

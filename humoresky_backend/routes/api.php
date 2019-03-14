@@ -21,3 +21,5 @@ Route::get('/vtip', 'JokeController@show');
 Route::get('/vtipy', 'JokeController@index');
 
 Route::post('/login', 'Auth\ApiLoginController@apiLogin');
+
+Route::middleware('auth:api')->post('/vtip/hodnotenie', 'JokeController@rate');
