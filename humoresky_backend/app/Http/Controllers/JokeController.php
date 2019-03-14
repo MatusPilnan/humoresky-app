@@ -53,7 +53,7 @@ class JokeController extends Controller
         if (is_null($joke)) {
             return response()->json(['message' => 'Vtip nenajdeny.'], 404);
         }
-        return response()->json(['joke' => $joke], 200, ['Content-Type' => 'application/json']);
+        return response()->json(['joke' => $joke], 200);
     }
 
     /**
@@ -97,9 +97,17 @@ class JokeController extends Controller
                 'rating' => 'required|numeric|min:1|max:5',
                 'joke' => 'required|numeric|min:0'
             ]);
+            $joke = Joke::find($overene['joke']);
+            if (is_null($joke)) {
+                return response()->json(['message' => 'Vtip nenajdeny'], 404);
+            }
 
+            $temp = $joke->hodnotenie * $joke->pocet_hodnoteni;
+            $joke->pocet_hodnoteni++;
+            $joke->hodnotenie = ($temp + $overene['rating']) / $joke->pocet_hodnoteni;
+            $joke->save();
 
-            return response()->json(['message' => 'Ohodnotene'], 200);
+            return response()->json(['message' => 'Ohodnotene', 'rating' => $joke->hodnotenie], 200);
         }
 
         return response()->json(['message' => 'Neprihlaseny!'], 401);
