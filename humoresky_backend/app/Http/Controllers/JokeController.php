@@ -53,7 +53,7 @@ class JokeController extends Controller
         if (is_null($joke)) {
             return response()->json(['message' => 'Vtip nenajdeny.'], 404);
         }
-        return response($joke->toJson(), 200, ['Content-Type' => 'application/json']);
+        return response()->json(['joke' => $joke], 200, ['Content-Type' => 'application/json']);
     }
 
     /**
@@ -94,8 +94,10 @@ class JokeController extends Controller
         if (auth()->user())
         {
             $overene = $request->validate([
-                'rating' => 'required|numeric|min:1|max:5'
+                'rating' => 'required|numeric|min:1|max:5',
+                'joke' => 'required|numeric|min:0'
             ]);
+
 
             return response()->json(['message' => 'Ohodnotene'], 200);
         }
