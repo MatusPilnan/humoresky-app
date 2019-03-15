@@ -65,15 +65,28 @@ class JokeController extends Controller
      */
     public function update(Request $request)
     {
-        $joke = Joke::find($request->query('joke'));
+        if (auth()->user())
+        {
+            $overene = $request->validate([
+                'joke' => 'required|numeric|min:0'
+            ]);
+            $joke = Joke::find($overene['joke']);
+            if (is_null($joke)) {
+                return response()->json(['message' => 'Vtip nenajdeny'], 404);
+            }
 
-        $joke->nazov = $request->nazov;
-        $joke->popis = $request->popis;
-        $joke->telo = $request->telo;
-        $joke->obrazok = $request->obrazok; //bude treba porobic
-        $joke->user_id = Auth::id(); //neni som si isty tymto, asi zle
+            $joke->nazov = $request->nazov;
+            $joke->popis = $request->popis;
+            $joke->telo = $request->telo;
+            $joke->obrazok = $request->obrazok; //bude treba porobic
+            $joke->user_id = Auth::id(); //neni som si isty tymto, asi zle
+    
+            $joke->save();
 
-        $joke->save();
+            return response()->json(['message' => 'Vymazane'], 200);
+        }
+
+        return response()->json(['message' => 'Neprihlaseny!'], 401);
     }
 
     /**
@@ -84,9 +97,22 @@ class JokeController extends Controller
      */
     public function destroy()
     {
-        $joke = Joke::find($request->query('joke'));
+        if (auth()->user())
+        {
+            $overene = $request->validate([
+                'joke' => 'required|numeric|min:0'
+            ]);
+            $joke = Joke::find($overene['joke']);
+            if (is_null($joke)) {
+                return response()->json(['message' => 'Vtip nenajdeny'], 404);
+            }
 
-        $joke->delete();
+            $joke->delete();
+
+            return response()->json(['message' => 'Vymazane'], 200);
+        }
+
+        return response()->json(['message' => 'Neprihlaseny!'], 401);
     }
 
     public function rate(Request $request)
