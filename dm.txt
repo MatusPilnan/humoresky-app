@@ -16,12 +16,12 @@ Tabulka pouzivatelia
 
 
 Volania:
--prihlasenie - POST - obsah: username a heslo, odpoved: OK ak sa podari prihlasit, ACCESS DENIED ak dá zlé heslo, BAD REQUEST ak je neznámy pouzivatel, SERVER ERROR ak to zlyha z ineho dovodu
--registracia - POST - obsah: email, nick a heslo, odpoved: OK ak sa podari vytvorit ucet, SERVER ERROR ak nie
+-HOTOVO-prihlasenie - POST - obsah: username a heslo, odpoved: OK ak sa podari prihlasit, ACCESS DENIED ak dï¿½ zlï¿½ heslo, BAD REQUEST ak je neznï¿½my pouzivatel, SERVER ERROR ak to zlyha z ineho dovodu
+-HOTOVO-registracia - POST - obsah: email, nick a heslo, odpoved: OK ak sa podari vytvorit ucet, SERVER ERROR ak nie
 -pridanie vtipu - POST - obsah: vsetky atributy vtipu (vid. DB tabulka) okrem id, odpoved: OK ak sa podari pridat vtip, BAD REQUEST ak nie je vsetko vyplnene, SERVER ERROR ak sa nepodari pridat vtip
 -uprava anekdoty - POST - obsah: vtip so zmenenymi atributmi, odpoved: OK ak sa podari zmenit, ACCESS DENIED ak sa pouzivatel pokusi upravit vtip kt. mu nepatri, SERVER ERROR ak sa uprava nepodari
--detail vtipu - GET - obsah: id vtipu, odpoved: OK a samotny vtip, NOT FOUND ak sa vtip nepodari najst
+-HOTOVO-detail vtipu - GET - obsah: id vtipu, odpoved: OK a samotny vtip, NOT FOUND ak sa vtip nepodari najst
 -vymazanie vtipu - POST->DELETE - obsah: id vtipu, odpoved: OK ak sa vymaze, ACCESS DENIED ak sa pokusi mazat vtip ineho autora, SERVER ERROR ak sa nepodari vymazat
 -zoznam vtipov - GET - obsah: pripadny filter podla autora, odpoved: OK a zoznam vtipov prefiltrovanych podla zadaneho filtra (ak je), SERVER ERROR ak sa nepodari
--ohodnotenie vtipu - POST - obsah: id vtipu a hodnotenie, odpoved: OK ak sa podari, NOT FOUND ak sa nenajde vtip s danym id, BAD REQUEST ak je hodnotenie zle cislo, SERVER ERROR ak to zlyha
+-HOTOVO-ohodnotenie vtipu - POST - obsah: id vtipu a hodnotenie, odpoved: OK ak sa podari, NOT FOUND ak sa nenajde vtip s danym id, BAD REQUEST ak je hodnotenie zle cislo, SERVER ERROR ak to zlyha
 
