@@ -28,5 +28,5 @@ Route::post('/register', 'Auth\ApiRegisterController@register');
 //manipulacia s vtipmi
 Route::middleware('auth:api')->post('/vtip/uloz', 'JokeController@store');
 Route::middleware('auth:api')->post('/vtip/uprav', 'JokeController@update');
-Route::middleware('auth:api')->delete('/vtip/vymaz', 'JokeController@delete');
+Route::middleware('auth:api')->delete('/vtip/vymaz', 'JokeController@destroy');
 Route::middleware('auth:api')->post('/vtip/hodnotenie', 'JokeController@rate');

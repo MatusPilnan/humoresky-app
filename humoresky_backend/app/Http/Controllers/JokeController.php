@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use App\Joke;
 use Illuminate\Http\Request;
 
@@ -14,10 +15,10 @@ class JokeController extends Controller
      */
     public function index(Request $request)
     {
-        if (isset($request->user_id))
-            $jokes = Joke::all()->where('user_id', '==', Auth::id())->orderBy('created_at', 'desc')->paginate(10);
+        if (auth()->user())
+            $jokes = Joke::where('user_id', '==', Auth::id())->orderBy('created_at', 'desc')->paginate(10);
         else
-            $jokes = Joke::all()->orderBy('created_at', 'desc')->paginate(10);
+            $jokes = Joke::orderBy('created_at', 'desc')->paginate(10);
 
         return response($jokes->toJson(), 200, ['Content-Type' => 'application/json']);
     }
@@ -38,22 +39,18 @@ class JokeController extends Controller
                 'telo' => 'required_without:obrazok',
                 'obrazok' => 'required_without:telo|image'
             ]);
-            $joke = Joke::find($overene['joke']);
-            if (is_null($joke)) {
-                return response()->json(['message' => 'Vtip nenajdeny'], 404);
-            }
 
             $joke = new Joke;
 
             $joke->nazov = $request->nazov;
             $joke->popis = $request->popis;
             $joke->telo = $request->telo;
-            $joke->obrazok = $request->obrazok; //bude treba porobic
-            $joke->user_id = Auth::id(); //neni som si isty tymto, asi zle
+            $joke->obrazok = $request->obrazok;
+            $joke->user_id = Auth::id();
     
             $joke->save();
 
-            return response()->json(['message' => 'Vymazane'], 200);
+            return response()->json(['message' => 'Ulozene'], 200);
         }
 
         return response()->json(['message' => 'Neprihlaseny!'], 401);
@@ -86,6 +83,7 @@ class JokeController extends Controller
         if (auth()->user())
         {
             $overene = $request->validate([
+                'joke' => 'required|numeric|min:0',
                 'nazov' => 'required',
                 'popis' => 'nullable',
                 'telo' => 'required_without:obrazok',
@@ -99,12 +97,12 @@ class JokeController extends Controller
             $joke->nazov = $request->nazov;
             $joke->popis = $request->popis;
             $joke->telo = $request->telo;
-            $joke->obrazok = $request->obrazok; //bude treba porobic
-            $joke->user_id = Auth::id(); //neni som si isty tymto, asi zle
+            $joke->obrazok = $request->obrazok;
+            $joke->user_id = Auth::id();
     
             $joke->save();
 
-            return response()->json(['message' => 'Vymazane'], 200);
+            return response()->json(['message' => 'Upravene'], 200);
         }
 
         return response()->json(['message' => 'Neprihlaseny!'], 401);
@@ -116,7 +114,7 @@ class JokeController extends Controller
      * @param  \App\Joke  $joke
      * @return \Illuminate\Http\Response
      */
-    public function destroy()
+    public function destroy(Request $request)
     {
         if (auth()->user())
         {
