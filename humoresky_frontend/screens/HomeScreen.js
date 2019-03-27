@@ -5,14 +5,13 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
+  FlatList
 } from 'react-native';
 import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
 import JokeCard from '../components/JokeCard';
-import { FlatList } from 'react-native-gesture-handler';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -39,15 +38,15 @@ export default class HomeScreen extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <FlatList
-          data={this.state.jokes}
-          onRefresh={() => this.onRefresh()}
-          refreshing={this.state.refreshing}
-          keyExtractor={(item, index) => String(item.id)}
-          renderItem={({item}) => <JokeCard joke={transform(item)}/>}
-        />
-      </View> 
+      <FlatList
+        style={styles.container}
+        data={this.state.jokes}
+        onRefresh={() => this.onRefresh()}
+        refreshing={this.state.refreshing}
+        keyExtractor={(item, index) => String(item.id)}
+        renderItem={({item}) => <JokeCard joke={transform(item)}/>}
+        ListEmptyComponent={<Text style={styles.emptyList}>HOPLA! Vyzerá to, že tu nie sú žiadne vtipy. Toto neni sranda!</Text>}
+      />
     );
   }
   
@@ -67,7 +66,7 @@ export default class HomeScreen extends React.Component {
   }
 
   onRefresh() {
-    this.setState({refreshing: true}, function() { this.getJokes() });
+    this.setState({jokes: [], refreshing: true}, function() { this.getJokes() });
   }
 }
 
@@ -86,7 +85,13 @@ export default class HomeScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 5,
     backgroundColor: '#000',
   },
-  
+  emptyList: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    textAlign: 'center',
+    color: 'white'
+  }
 });

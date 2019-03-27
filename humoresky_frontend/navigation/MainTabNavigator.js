@@ -4,8 +4,8 @@ import { createStackNavigator, createMaterialTopTabNavigator } from 'react-navig
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import LoginScreen from '../screens/LoginScreen';
+import NewJokeScreen from '../screens/NewJokeScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -25,12 +25,12 @@ HomeStack.navigationOptions = {
   ),
 };
 
-const LinksStack = createStackNavigator({
-  Links: LinksScreen,
+const LoginStack = createStackNavigator({
+  Login: LoginScreen,
 });
 
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
+LoginStack.navigationOptions = {
+  tabBarLabel: 'Login',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -39,12 +39,12 @@ LinksStack.navigationOptions = {
   ),
 };
 
-const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen,
+const NewJokeStack = createStackNavigator({
+  NewJoke: NewJokeScreen,
 });
 
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+NewJokeStack.navigationOptions = {
+  tabBarLabel: 'NewJoke',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -55,8 +55,8 @@ SettingsStack.navigationOptions = {
 
 export default createMaterialTopTabNavigator({
   HomeStack,
-  LinksStack,
-  SettingsStack,
+  LoginStack,
+  NewJokeStack,
 }, {
   swipeEnabled: false,
 });
