@@ -5,6 +5,13 @@ import { ExpoLinksView } from '@expo/samples';
 export default class LinksScreen extends React.Component {
   static navigationOptions = {
     title: 'Links',
+    headerStyle: {
+      backgroundColor: "#505050"
+    },
+    headerTintColor: "#fff",
+    headerTitleStyle: {
+      fontWeight: "bold"
+    }
   };
 
   render() {
@@ -22,6 +29,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
   },
 });
