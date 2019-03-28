@@ -1,7 +1,8 @@
 import React from 'react'
 import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { withNavigation } from 'react-navigation'
 
-export default class JokeCard extends React.Component {
+class JokeCard extends React.Component {
   constructor(props) {
     super(props)
     this.state = { joke: props.joke }
@@ -9,7 +10,7 @@ export default class JokeCard extends React.Component {
 
   render() {
     return (
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => {  }}>
         <View style={styles.container}>
           <Image
             style={{ width: 70, height: 70, marginRight: 15 }}
@@ -30,6 +31,8 @@ export default class JokeCard extends React.Component {
     );
   }
 }
+
+export default withNavigation(JokeCard)
 
 const styles = StyleSheet.create({
   container: {

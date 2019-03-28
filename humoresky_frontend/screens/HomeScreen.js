@@ -1,8 +1,8 @@
 import React from 'react';
 import {
   Image,
-  Platform,
-  ScrollView,
+  Dimensions,
+  ActivityIndicator,
   StyleSheet,
   Text,
   View,
@@ -15,7 +15,7 @@ import JokeCard from '../components/JokeCard';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
-    title: "Humoresky",
+    title: "Humoresky 😂😂😂",
     headerStyle: {
       backgroundColor: "#505050"
     },
@@ -28,7 +28,7 @@ export default class HomeScreen extends React.Component {
     super(props)
     this.state = {
       jokes: [], 
-      refreshing: false
+      refreshing: true,
     }
   }
 
@@ -45,7 +45,7 @@ export default class HomeScreen extends React.Component {
         refreshing={this.state.refreshing}
         keyExtractor={(item, index) => String(item.id)}
         renderItem={({item}) => <JokeCard joke={transform(item)}/>}
-        ListEmptyComponent={<Text style={styles.emptyList}>HOPLA! Vyzerá to, že tu nie sú žiadne vtipy. Toto neni sranda!</Text>}
+        ListEmptyComponent={() => this.emptyList()}
       />
     );
   }
@@ -56,13 +56,38 @@ export default class HomeScreen extends React.Component {
     .then((json) => {
       this.setState({
         jokes: json.data,
-        refreshing: false
+        refreshing: false,
       })
       return json.data
     })
     .catch((error) => {
-      console.error(error)
+      console.debug(error)
+      this.setState({
+        refreshing: false,
+      })
     })
+  }
+
+  emptyList() {
+    if (this.state.refreshing) {
+      return (
+      <View style={styles.emptyListContainer}>
+        <View style={{height: Dimensions.get('screen').height * 0.3}} />
+        <Text style={styles.emptyList}>Zháňam najčerstvejšie humory...</Text>
+        <View style={{height: 20}} />
+        <ActivityIndicator size="large" color="white" />
+      </View>
+    )
+    }
+    return (
+      <View style={styles.emptyListContainer}>
+        <View style={{height: Dimensions.get('screen').height * 0.3}} />
+        <Text style={styles.emptyList}>HOPLA!</Text>
+        <Text style={styles.emptyList}>Vyzerá to, že tu nie sú žiadne vtipy.</Text>
+        <Text style={styles.emptyList}>Toto neni sranda!</Text>
+      </View>
+      
+    )
   }
 
   onRefresh() {
@@ -86,12 +111,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 5,
+    backgroundColor: 'black',
+  },
+  emptyListContainer: {
+    flex: 1,
+    paddingTop: 15,
     backgroundColor: '#000',
+    justifyContent: 'space-evenly',
   },
   emptyList: {
     fontWeight: 'bold',
     fontSize: 20,
     textAlign: 'center',
-    color: 'white'
+    color: 'white',
   }
 });

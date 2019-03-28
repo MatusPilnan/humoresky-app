@@ -26,7 +26,7 @@
       "supportsTablet": true
     },
     "extra": {
-      "server": "http://10.10.10.79:8000"
+      "server": "http://147.175.163.181:8000"
     }
   }
 }
