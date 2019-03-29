@@ -1,6 +1,6 @@
 import React from 'react';
-import { Platform } from 'react-native';
-import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
+import { StyleSheet } from 'react-native'
+import { createStackNavigator, createDrawerNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
@@ -42,5 +42,11 @@ export default createDrawerNavigator({
     inactiveTintColor: 'white',
     activeTintColor: 'black',
     activeBackgroundColor: 'orange',
-  }
+  },
+});
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
 });

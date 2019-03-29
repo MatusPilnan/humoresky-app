@@ -1,15 +1,15 @@
 import React from 'react';
 import {
-  Image,
   Dimensions,
   ActivityIndicator,
   StyleSheet,
   Text,
   View,
-  FlatList
+  FlatList,
 } from 'react-native';
 
 import JokeCard from '../components/JokeCard';
+import HeaderButton from '../components/HeaderButton';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -20,7 +20,8 @@ export default class HomeScreen extends React.Component {
     headerTintColor: "#fff",
     headerTitleStyle: {
       fontWeight: "bold"
-    }
+    },
+    headerLeft: <HeaderButton />
   };
   constructor(props) {
     super(props)

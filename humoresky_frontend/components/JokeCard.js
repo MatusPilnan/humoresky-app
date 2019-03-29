@@ -10,7 +10,7 @@ class JokeCard extends React.Component {
 
   render() {
     return (
-      <TouchableOpacity onPress={() => { this.props.navigation.navigate('NewJoke', {joke: this.state.joke}) }}>
+      <TouchableOpacity onPress={() => { /*this.props.navigation.navigate(DETAIL VTIPU, {joke: this.state.joke})*/ } }>
         <View style={styles.container}>
           <Image
             style={{ width: 70, height: 70, marginRight: 15 }}

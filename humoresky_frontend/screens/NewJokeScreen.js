@@ -3,6 +3,8 @@ import { ScrollView, TouchableOpacity, View, TextInput, Text, StyleSheet, Camera
 import { Permissions, ImagePicker } from 'expo'
 import { NavigationEvents } from 'react-navigation'
 
+import HeaderButton from '../components/HeaderButton';
+
 export default class NewJokeScreen extends React.Component {
   static navigationOptions = ({navigation}) => {
     return {
@@ -13,7 +15,8 @@ export default class NewJokeScreen extends React.Component {
       headerTintColor: "#fff",
       headerTitleStyle: {
         fontWeight: "bold"
-      }
+      },
+      headerLeft: <HeaderButton />
     }
   };
 
@@ -45,6 +48,7 @@ export default class NewJokeScreen extends React.Component {
         <TextInput 
           value={this.state.joke.title}
           style={ this.state.jokeTitleError ? styles.formError : styles.form } 
+          maxLength={254}
           onChangeText={(jokeTitle) => this.setState({
             joke: {
               id: this.state.joke.id,
@@ -97,18 +101,42 @@ export default class NewJokeScreen extends React.Component {
 
         <Text style={ this.state.jokeBodyError ? {color: 'orange'} : {color: 'black'}}>Musíš zadať telo vtipu alebo obrázok!</Text>
 
-        <TouchableOpacity
-          onPress={() => this.getImage()}>
-          <View style={ this.state.jokeBodyError ? styles.imageError : styles.imageButton }>
-            <Text style={ this.state.jokeBodyError ? styles.imageErrorText : styles.imageButtonText }>
-              {this.state.jokeImageUri == null ? "Pridať obrázok" : "Zmeniť obrázok"}
-            </Text>
-          </View>
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.getImage()}>
+            <View style={ this.state.jokeBodyError ? styles.imageError : styles.imageButton }>
+              <Text style={ this.state.jokeBodyError ? styles.imageErrorText : styles.imageButtonText }>
+                {this.state.joke.picture == null ? "Pridať obrázok" : "Zmeniť obrázok"}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        
+        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
 
-        <Image
-          style={{width: 90, height: 100, resizeMode: 'contain'}}
-          source={{uri: this.state.joke.picture}} />
+          <Image
+            style={this.state.joke.picture == null ? {height: 0} : {width: 90, height: 100, marginBottom: 20, resizeMode: 'contain'}}
+            source={{uri: this.state.joke.picture}} />
+
+          <TouchableOpacity
+            onPress={() => this.setState({
+              joke: {
+                id: this.state.joke.id,
+                title: this.state.joke.title,
+                description: this.state.joke.description,
+                body: this.state.joke.body,
+                rating: this.state.joke.rating,
+                picture: null,
+                user_id: this.state.joke.user_id
+              },
+              jokeImageB64: null
+            })}>
+
+            <View style={ this.state.joke.picture == null ? {width: 0} : styles.removeImageButton }>
+              <Text style={ styles.removeImageText }>
+                ❌
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
 
         <TouchableOpacity
           onPress={() => this.submit()}>
@@ -137,7 +165,8 @@ export default class NewJokeScreen extends React.Component {
                     picture: response.uri,
                     user_id: this.state.joke.user_id
                   },
-                  jokeImageB64: response.base64
+                  jokeImageB64: response.base64,
+                  jokeBodyError: false
               })
             }
           })
@@ -153,11 +182,9 @@ export default class NewJokeScreen extends React.Component {
       jokeTitleError: (this.state.joke.title == ''),
       jokeBodyError: (this.state.joke.body == '' && this.state.jokeImageB64 == null)
     })
-    if (this.state.newJoke == null) {
-      return
-    }
+    if (this.state.jokeBodyError || this.state.jokeTitleError || this.state.jokeTitleError) return
     this.state.joke.body = this.state.jokeBody
-    console.debug(this.state.joke)
+    //SEM TREBA PRIDAT SAMOTNY REQUEST NA SERVER
   }
 }
 
@@ -171,10 +198,7 @@ const initialState = {
     picture: null,
     user_id: null
   },
-  jokeTitle: '',
   jokeTitleError: false,
-  jokeDescription: '',
-  jokeBody: '',
   jokeBodyError: false,
   jokeImageUri: null,
   jokeImageB64: null
@@ -236,9 +260,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'white',
     height: 50,
+    width: '100%',
     backgroundColor: 'black',
     marginBottom: 15,
-    marginTop: 20
+    marginTop: 10
   },
   imageButtonText: {
     color: 'white',
@@ -259,6 +284,24 @@ const styles = StyleSheet.create({
   },
   imageErrorText: {
     color: 'orange',
+    fontSize: 20,
+    textAlign: 'center'
+  },
+  removeImageButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: 'red',
+    height: 50,
+    width: '85%',
+    backgroundColor: 'black',
+    marginBottom: 15,
+    marginTop: 20,
+    marginLeft: 10,
+    width: 40,
+  },
+  removeImageText: {
     fontSize: 20,
     textAlign: 'center'
   }
