@@ -42,7 +42,7 @@ export default class HomeScreen extends React.Component {
         onRefresh={() => this.onRefresh()}
         refreshing={this.state.refreshing}
         keyExtractor={(item, index) => String(item.id)}
-        renderItem={({item}) => <JokeCard joke={transform(item)}/>}
+        renderItem={({item}) => <JokeCard joke={transform(item)} />}
         ListEmptyComponent={() => this.emptyList()}
       />
     );

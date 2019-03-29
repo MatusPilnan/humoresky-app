@@ -3,36 +3,18 @@ import { ScrollView, TouchableOpacity, View, TextInput, Text, StyleSheet, Camera
 import { Permissions, ImagePicker } from 'expo'
 import { NavigationEvents } from 'react-navigation'
 
-export default class NewJokeScreen extends React.Component {
-  static navigationOptions = ({navigation}) => {
-    return {
-      title: navigation.getParam('title', 'Nový vtip'),
-      headerStyle: {
-        backgroundColor: "#505050"
-      },
-      headerTintColor: "#fff",
-      headerTitleStyle: {
-        fontWeight: "bold"
-      }
-    }
-  };
-
+export default class JokeForm extends React.Component {
   constructor(props) {
     super(props)
+    console.debug('KONSTRUKTOR OBRAZOVKY NOVEHO VTIPU')
     this.state = initialState
   }
 
   clear() {
-    this.props.navigation.setParams({ title: "Nový vtip"})
     this.setState(initialState)
-    jokeParam = this.props.navigation.getParam('joke', null)
-    if (jokeParam != null) {
-      this.setState({
-        joke: jokeParam
-      })
-      this.props.navigation.setParams({ title: "Úprava vtipu"})
-    }
-    this.props.navigation.setParams({joke: null})
+    this.textInputBody.clear()
+    this.textInputDescription.clear()
+    this.textInputBody.clear()
   }
 
   render() {
@@ -43,57 +25,27 @@ export default class NewJokeScreen extends React.Component {
         />
         <Text style={ this.state.jokeTitleError ? styles.formLabelError : styles.formLabel }>Názov vtipu (povinné)</Text>
         <TextInput 
-          value={this.state.joke.title}
+          value={this.state.jokeTitle}
           style={ this.state.jokeTitleError ? styles.formError : styles.form } 
-          onChangeText={(jokeTitle) => this.setState({
-            joke: {
-              id: this.state.joke.id,
-              title: jokeTitle,
-              description: this.state.joke.description,
-              body: this.state.joke.body,
-              rating: this.state.joke.rating,
-              picture: this.state.joke.picture,
-              user_id: this.state.joke.user_id
-            },
-          })}
-        />
+          onChangeText={(jokeTitle) => this.setState({jokeTitle})}
+          ref={input => { this.textInputTitle = input}} />
 
 
         <Text style={styles.formLabel}>Popis vtipu</Text>
         <TextInput 
-          value={this.state.joke.description}
+          value={this.state.jokeDescription}
           style={styles.form} 
-          onChangeText={(jokeDescription) => this.setState({
-            joke: {
-              id: this.state.joke.id,
-              title: this.state.joke.title,
-              description: jokeDescription,
-              body: this.state.joke.body,
-              rating: this.state.joke.rating,
-              picture: this.state.joke.picture,
-              user_id: this.state.joke.user_id
-            },
-          })}
-        />
+          onChangeText={(jokeDescription) => this.setState({jokeDescription})}
+          ref={input => { this.textInputDescription = input }} />
 
 
         <Text style={ this.state.jokeBodyError ? styles.formLabelError : styles.formLabel }>Vtip</Text>
         <TextInput 
-          value={this.state.joke.body}
+          value={this.state.jokeBody}
           style={ this.state.jokeBodyError ? styles.formError : styles.form } 
           multiline={true} 
-          onChangeText={(jokeBody) => this.setState({
-            joke: {
-              id: this.state.joke.id,
-              title: this.state.joke.title,
-              description: this.state.joke.description,
-              body: jokeBody,
-              rating: this.state.joke.rating,
-              picture: this.state.joke.picture,
-              user_id: this.state.joke.user_id
-            },
-          })}
-        />
+          onChangeText={(jokeBody) => this.setState({jokeBody})}
+          ref={input => { this.textInputBody = input }} />
 
         <Text style={ this.state.jokeBodyError ? {color: 'orange'} : {color: 'black'}}>Musíš zadať telo vtipu alebo obrázok!</Text>
 
@@ -108,7 +60,7 @@ export default class NewJokeScreen extends React.Component {
 
         <Image
           style={{width: 90, height: 100, resizeMode: 'contain'}}
-          source={{uri: this.state.joke.picture}} />
+          source={{uri: this.state.jokeImageUri}} />
 
         <TouchableOpacity
           onPress={() => this.submit()}>
@@ -128,15 +80,7 @@ export default class NewJokeScreen extends React.Component {
           .then(response => {
             if (!response.cancelled) {
                 this.setState({
-                  joke: {
-                    id: this.state.joke.id,
-                    title: this.state.joke.title,
-                    description: this.state.joke.description,
-                    body: this.state.joke.body,
-                    rating: this.state.joke.rating,
-                    picture: response.uri,
-                    user_id: this.state.joke.user_id
-                  },
+                  jokeImageUri: response.uri,
                   jokeImageB64: response.base64
               })
             }
@@ -150,8 +94,8 @@ export default class NewJokeScreen extends React.Component {
 
   submit() {
     this.setState({
-      jokeTitleError: (this.state.joke.title == ''),
-      jokeBodyError: (this.state.joke.body == '' && this.state.jokeImageB64 == null)
+      jokeTitleError: (this.state.jokeTitle == ''),
+      jokeBodyError: (this.state.jokeBody == '' && this.state.jokeImageB64 == null)
     })
     if (this.state.newJoke == null) {
       return
@@ -162,15 +106,7 @@ export default class NewJokeScreen extends React.Component {
 }
 
 const initialState = {
-  joke: {
-    id: null,
-    title: '',
-    description: '',
-    body: '',
-    rating: null,
-    picture: null,
-    user_id: null
-  },
+  newJoke: null,
   jokeTitle: '',
   jokeTitleError: false,
   jokeDescription: '',
