@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView, TouchableOpacity, View, TextInput, Text, StyleSheet, CameraRoll, Image } from 'react-native';
-import { Permissions } from 'expo'
+import { Permissions, ImagePicker } from 'expo'
+import { NavigationEvents } from 'react-navigation'
 
 export default class NewJokeScreen extends React.Component {
   static navigationOptions = {
@@ -16,50 +17,62 @@ export default class NewJokeScreen extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = {
-      newJoke: null,
-      jokeTitle: '',
-      jokeTitleError: false,
-      jokeBody: '',
-      jokeBodyError: false,
-      jokeImageUri: null
-    }
+    console.debug('KONSTRUKTOR OBRAZOVKY NOVEHO VTIPU')
+    this.state = initialState
+  }
+
+  clear() {
+    this.setState(initialState)
+    this.textInputBody.clear()
+    this.textInputDescription.clear()
+    this.textInputBody.clear()
   }
 
   render() {
     return (
       <ScrollView style={styles.container}>
-
+        <NavigationEvents
+          onDidFocus={(payload) => this.clear()}
+        />
         <Text style={ this.state.jokeTitleError ? styles.formLabelError : styles.formLabel }>Názov vtipu (povinné)</Text>
         <TextInput 
+          value={this.state.jokeTitle}
           style={ this.state.jokeTitleError ? styles.formError : styles.form } 
-          onChangeText={(jokeTitle) => this.setState({jokeTitle})} />
+          onChangeText={(jokeTitle) => this.setState({jokeTitle})}
+          ref={input => { this.textInputTitle = input}} />
 
 
         <Text style={styles.formLabel}>Popis vtipu</Text>
         <TextInput 
+          value={this.state.jokeDescription}
           style={styles.form} 
-          onChangeText={(jokeDescription) => this.setState({jokeDescription})} />
+          onChangeText={(jokeDescription) => this.setState({jokeDescription})}
+          ref={input => { this.textInputDescription = input }} />
 
 
         <Text style={ this.state.jokeBodyError ? styles.formLabelError : styles.formLabel }>Vtip</Text>
         <TextInput 
+          value={this.state.jokeBody}
           style={ this.state.jokeBodyError ? styles.formError : styles.form } 
           multiline={true} 
-          onChangeText={(jokeBody) => this.setState({jokeBody})} />
+          onChangeText={(jokeBody) => this.setState({jokeBody})}
+          ref={input => { this.textInputBody = input }} />
 
+        <Text style={ this.state.jokeBodyError ? {color: 'orange'} : {color: 'black'}}>Musíš zadať telo vtipu alebo obrázok!</Text>
 
         <TouchableOpacity
           onPress={() => this.getImage()}>
-          <View style={styles.imageButton}>
-            <Text style={styles.imageButtonText}>Pridať obrázok</Text>
+          <View style={ this.state.jokeBodyError ? styles.imageError : styles.imageButton }>
+            <Text style={ this.state.jokeBodyError ? styles.imageErrorText : styles.imageButtonText }>
+              {this.state.jokeImageUri == null ? "Pridať obrázok" : "Zmeniť obrázok"}
+            </Text>
           </View>
         </TouchableOpacity>
 
         <Image
-          style={{width: 300, height: 100, resizeMode: 'contain'}}
+          style={{width: 90, height: 100, resizeMode: 'contain'}}
           source={{uri: this.state.jokeImageUri}} />
-          
+
         <TouchableOpacity
           onPress={() => this.submit()}>
           <View style={styles.submitButton}>
@@ -74,14 +87,14 @@ export default class NewJokeScreen extends React.Component {
     Permissions.askAsync(Permissions.CAMERA_ROLL)
       .then(perm => {
         if (perm.status == 'granted') {
-          CameraRoll.getPhotos({
-            first: 1
-          }).then(r => {
-            this.setState({
-              jokeImageUri: r.edges[0].node.image.uri
-            })
-          }).catch(error => {
-            console.debug(error)
+          ImagePicker.launchImageLibraryAsync({mediaTypes: ImagePicker.MediaTypeOptions.Images, base64: true})
+          .then(response => {
+            if (!response.cancelled) {
+                this.setState({
+                  jokeImageUri: response.uri,
+                  jokeImageB64: response.base64
+              })
+            }
           })
         }
       }).catch(error => {
@@ -93,7 +106,7 @@ export default class NewJokeScreen extends React.Component {
   submit() {
     this.setState({
       jokeTitleError: (this.state.jokeTitle == ''),
-      jokeBodyError: (this.state.jokeBody == '')
+      jokeBodyError: (this.state.jokeBody == '' && this.state.jokeImageB64 == null)
     })
     if (this.state.newJoke == null) {
       return
@@ -101,6 +114,17 @@ export default class NewJokeScreen extends React.Component {
     this.state.joke.body = this.state.jokeBody
     console.debug(this.state.joke)
   }
+}
+
+const initialState = {
+  newJoke: null,
+  jokeTitle: '',
+  jokeTitleError: false,
+  jokeDescription: '',
+  jokeBody: '',
+  jokeBodyError: false,
+  jokeImageUri: null,
+  jokeImageB64: null
 }
 
 const styles = StyleSheet.create({
@@ -165,6 +189,23 @@ const styles = StyleSheet.create({
   },
   imageButtonText: {
     color: 'white',
+    fontSize: 20,
+    textAlign: 'center'
+  },
+  imageError: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: 'orange',
+    color: 'orange',
+    height: 50,
+    backgroundColor: 'black',
+    marginBottom: 15,
+    marginTop: 20
+  },
+  imageErrorText: {
+    color: 'orange',
     fontSize: 20,
     textAlign: 'center'
   }

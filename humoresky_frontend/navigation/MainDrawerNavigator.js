@@ -28,7 +28,8 @@ const NewJokeStack = createStackNavigator({
 });
 
 NewJokeStack.navigationOptions = {
-  drawerLabel: 'NewJoke',
+  drawerLabel: 'Pridať vtip',
+  
 };
 
 export default createDrawerNavigator({

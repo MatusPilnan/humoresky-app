@@ -2,8 +2,9 @@
   "devToolsPort": 19002,
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 21180,
-  "expoServerNgrokUrl": "https://er-4pj.anonymous.humoresky-frontend.exp.direct",
-  "packagerNgrokUrl": "https://packager.er-4pj.anonymous.humoresky-frontend.exp.direct",
-  "ngrokPid": 8792
+  "packagerPid": 8036,
+  "expoServerNgrokUrl": "https://yu-csn.anonymous.humoresky-frontend.exp.direct",
+  "packagerNgrokUrl": "https://packager.yu-csn.anonymous.humoresky-frontend.exp.direct",
+  "ngrokPid": 8724,
+  "webpackServerPort": null
 }

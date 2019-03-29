@@ -8,9 +8,7 @@ import {
   View,
   FlatList
 } from 'react-native';
-import { WebBrowser } from 'expo';
 
-import { MonoText } from '../components/StyledText';
 import JokeCard from '../components/JokeCard';
 
 export default class HomeScreen extends React.Component {
