@@ -1,54 +1,52 @@
 import React from 'react';
-import { StyleSheet } from 'react-native'
+import { StyleSheet, AsyncStorage, Text } from 'react-native'
 import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
 
 import HomeScreen from '../screens/HomeScreen';
-import LoginScreen from '../screens/LoginScreen';
 import NewJokeScreen from '../screens/NewJokeScreen';
-import RegisterScreen from '../screens/RegisterScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
-  Login: LoginScreen,
+},{
+  defaultNavigationOptions: {
+    headerRight: <Text style={{
+      color: 'orange',
+      textAlign: 'center',
+      textAlignVertical: 'center',
+      marginRight: 10
+    }}>Prihlásený</Text>
+  }
 });
 
 HomeStack.navigationOptions = {
   drawerLabel: 'Domov',
 };
 
-const LoginStack = createStackNavigator({
-  Login: LoginScreen,
-  Register: RegisterScreen
-});
-
-LoginStack.navigationOptions = {
-  drawerLabel: 'Prihlásenie',
-};
-
 const NewJokeStack = createStackNavigator({
   NewJoke: NewJokeScreen,
+},{
+  defaultNavigationOptions: {
+    headerRight: <Text style={{
+      color: 'orange',
+      textAlign: 'center',
+      textAlignVertical: 'center',
+      marginRight: 10
+    }}>Prihlásený</Text>
+  }
 });
 
 NewJokeStack.navigationOptions = {
   drawerLabel: 'Pridať vtip',
-  params: {}
 };
 
 export default createDrawerNavigator({
   HomeStack,
-  LoginStack,
-  //NewJokeStack,
+  NewJokeStack,
 },{
   drawerBackgroundColor: '#505050',
   contentOptions: {
     inactiveTintColor: 'white',
     activeTintColor: 'black',
     activeBackgroundColor: 'orange',
-  },
-});
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
   },
 });

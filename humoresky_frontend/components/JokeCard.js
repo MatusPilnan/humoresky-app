@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Image, Text, TouchableOpacity, StyleSheet, AsyncStorage } from 'react-native'
 import { withNavigation } from 'react-navigation'
 
 class JokeCard extends React.Component {
