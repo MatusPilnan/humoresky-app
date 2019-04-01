@@ -28,6 +28,8 @@ export default class HomeScreen extends React.Component {
     this.state = {
       jokes: [], 
       refreshing: true,
+      fetching: false,
+      page: 1
     }
   }
 
@@ -41,10 +43,13 @@ export default class HomeScreen extends React.Component {
         style={styles.container}
         data={this.state.jokes}
         onRefresh={() => this.onRefresh()}
+        onEndReached={() => this.onFetchMore()}
+        onEndReachedThreshold={0.2}
         refreshing={this.state.refreshing}
         keyExtractor={(item, index) => String(item.id)}
         renderItem={({item}) => <JokeCard joke={transform(item)} />}
         ListEmptyComponent={() => this.emptyList()}
+        ListFooterComponent={(this.state.fetching || this.state.refreshing) ? <ActivityIndicator size='large' color='white' /> : null}
       />
     );
   }
@@ -56,6 +61,7 @@ export default class HomeScreen extends React.Component {
       this.setState({
         jokes: json.data,
         refreshing: false,
+        page: 1
       })
       return json.data
     })
@@ -67,6 +73,29 @@ export default class HomeScreen extends React.Component {
     })
   }
 
+  getMoreJokes() {
+    return fetch(Expo.Constants.manifest.extra.server + '/api/vtipy?page=' + (this.state.page + 1))
+    .then((response) => response.json())
+    .then((json) => {
+      if (json.data.length > 0) {
+        this.setState({
+          jokes: this.state.jokes.concat(json.data),
+          page: this.state.page + 1,
+          fetching: false
+        })
+      }
+      this.setState({
+        fetching: false
+      })
+    })
+    .catch((error) => {
+      console.debug(error)
+      this.setState({
+        fetching: false,
+      })
+    })
+  }
+
   emptyList() {
     if (this.state.refreshing) {
       return (
@@ -74,7 +103,7 @@ export default class HomeScreen extends React.Component {
         <View style={{height: Dimensions.get('screen').height * 0.3}} />
         <Text style={styles.emptyList}>Zháňam najčerstvejšie humory...</Text>
         <View style={{height: 20}} />
-        <ActivityIndicator size="large" color="white" />
+        {/* <ActivityIndicator size="large" color="white" /> */}
       </View>
     )
     }
@@ -91,6 +120,11 @@ export default class HomeScreen extends React.Component {
 
   onRefresh() {
     this.setState({jokes: [], refreshing: true}, function() { this.getJokes() });
+  }
+
+  onFetchMore() {
+    if (this.state.fetching) return
+    this.setState({fetching: true}, function () { this.getMoreJokes() })
   }
 }
 
