@@ -95,7 +95,6 @@ export default class LoginScreen extends React.Component {
     }).then(response => {
       if (response.ok) {
         response.json().then((json) => {
-          console.debug(json)
           AsyncStorage.multiSet([['apiToken', json.api_token], ['user', this.state.login]]).catch(error => console.error(error))
           this.props.navigation.navigate('LoggedIn')
         }).catch(error => console.error(error))
