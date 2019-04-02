@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, TouchableOpacity, View, TextInput, Text, StyleSheet, CameraRoll, Image } from 'react-native';
+import { ScrollView, TouchableOpacity, View, TextInput, Text, StyleSheet, CameraRoll, Image, AsyncStorage  } from 'react-native';
 import { Permissions, ImagePicker } from 'expo'
 import { NavigationEvents } from 'react-navigation'
 
@@ -149,11 +149,12 @@ export default class NewJokeScreen extends React.Component {
   }
 
   getImage() {
+    console.debug('fungujem')
     Permissions.askAsync(Permissions.CAMERA_ROLL)
       .then(perm => {
         if (perm.status == 'granted') {
           ImagePicker.launchImageLibraryAsync({mediaTypes: ImagePicker.MediaTypeOptions.Images, base64: true})
-          .then(response => {
+          .then((response) => {
             if (!response.cancelled) {
                 this.setState({
                   joke: {
@@ -169,7 +170,7 @@ export default class NewJokeScreen extends React.Component {
                   jokeBodyError: false
               })
             }
-          })
+          }).catch(error => console.debug(error))
         }
       }).catch(error => {
         console.debug(error)
@@ -183,8 +184,32 @@ export default class NewJokeScreen extends React.Component {
       jokeBodyError: (this.state.joke.body == '' && this.state.jokeImageB64 == null)
     })
     if (this.state.jokeBodyError || this.state.jokeTitleError || this.state.jokeTitleError) return
-    this.state.joke.body = this.state.jokeBody
-    //SEM TREBA PRIDAT SAMOTNY REQUEST NA SERVER
+
+
+    AsyncStorage.getItem('apiToken').then((apiToken) => {
+      fetch(Expo.Constants.manifest.extra.server + '/api/vtip/uloz', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer '+ apiToken
+        },
+        body: JSON.stringify({
+          nazov: this.state.joke.title,
+          popis: this.state.joke.description,
+          telo: this.state.joke.body,
+          obrazok: 'data:image/png;base64,' + this.state.jokeImageB64
+        }),
+      }).then(response => {
+        if (response.ok) {
+          this.props.navigation.navigate('Home')
+          alert('Úspešne uložený!')
+        }
+      }).catch(error => {
+        console.error(error)
+        alert('Odosielanie zlyhalo!')
+      })
+    })
   }
 }
 

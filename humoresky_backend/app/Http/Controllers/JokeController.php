@@ -37,7 +37,7 @@ class JokeController extends Controller
                 'nazov' => 'required',
                 'popis' => 'nullable',
                 'telo' => 'required_without:obrazok',
-                'obrazok' => 'required_without:telo|image'
+                'obrazok' => 'required_without:telo'
             ]);
 
             $joke = new Joke;
