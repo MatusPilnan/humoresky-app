@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Text, TextInput, TouchableOpacity, AsyncStorage } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, TextInput, TouchableOpacity, AsyncStorage, ActivityIndicator, KeyboardAvoidingView } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 
 import HeaderButton from '../components/HeaderButton';
@@ -22,7 +22,7 @@ export default class LoginScreen extends React.Component {
   }
 
   render() {
-    return (
+  return (
       <View style={styles.container}>
         <ScrollView style={styles.container}>
           <NavigationEvents onDidFocus={() => this.setState(initialState)} />
@@ -58,12 +58,16 @@ export default class LoginScreen extends React.Component {
           />
         </ScrollView>
 
+        { this.state.submitting ?
+        <ActivityIndicator size="large" color="orange" />
+        :
         <TouchableOpacity
           onPress={() => this.submit()}>
           <View style={styles.submitButton}>
             <Text style={styles.submitText}>Prihlásiť sa</Text>
           </View>
         </TouchableOpacity>
+        }
         <View style={styles.noAccountContainer}>
             <Text style={styles.noAccountText}>Nemáš účet?  </Text>
             <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')}>
@@ -81,7 +85,9 @@ export default class LoginScreen extends React.Component {
     })
     if (this.state.login == '' || this.state.login == '') return
 
-
+    this.setState({
+      submitting: true,
+    })
     fetch(Expo.Constants.manifest.extra.server + '/api/login', {
       method: 'POST',
       headers: {
@@ -105,6 +111,7 @@ export default class LoginScreen extends React.Component {
       }
     }).catch(error => {
       console.error(error)
+      this.setState(initialState)
       alert('Prihlasovanie zlyhalo.')
     })
     
@@ -116,12 +123,13 @@ const initialState = {
   password: '',
   loginError: false,
   passwordError: false,
+  submitting: false,
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 5,
     backgroundColor: '#000',
   },
   formLabel: {

@@ -162,6 +162,11 @@ export default class LoginScreen extends React.Component {
           }
         })
       }
+    }).catch((error) => {
+      console.error(error)
+      this.setState({
+        submitting: false
+      })
     })
   }
 }

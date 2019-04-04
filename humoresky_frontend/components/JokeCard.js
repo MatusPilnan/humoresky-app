@@ -14,7 +14,7 @@ class JokeCard extends React.Component {
         <View style={styles.container}>
           <Image
             style={{ width: 70, height: 70, marginRight: 15 }}
-            source={(typeof this.state.joke.picture !== "undefined" && this.state.joke.picture != null) ? { uri: this.state.joke.picture } : require('../assets/images/lol-512.png')}
+            source={(typeof this.state.joke.picture !== "undefined" && this.state.joke.picture != null && this.state.joke.picture != 'data:image/png;base64,') ? { uri: this.state.joke.picture } : require('../assets/images/lol-512.png')}
           />
           <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>

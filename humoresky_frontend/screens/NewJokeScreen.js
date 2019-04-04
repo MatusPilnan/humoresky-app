@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, TouchableOpacity, View, TextInput, Text, StyleSheet, CameraRoll, Image, AsyncStorage  } from 'react-native';
+import { ScrollView, TouchableOpacity, View, TextInput, Text, StyleSheet, CameraRoll, Image, AsyncStorage, ActivityIndicator  } from 'react-native';
 import { Permissions, ImagePicker } from 'expo'
 import { NavigationEvents } from 'react-navigation'
 
@@ -31,7 +31,8 @@ export default class NewJokeScreen extends React.Component {
     jokeParam = this.props.navigation.getParam('joke', null)
     if (jokeParam != null) {
       this.setState({
-        joke: jokeParam
+        joke: jokeParam,
+        jokeImageB64: jokeParam.picture
       })
       this.props.navigation.setParams({ title: "Úprava vtipu"})
     }
@@ -47,6 +48,7 @@ export default class NewJokeScreen extends React.Component {
         <Text style={ this.state.jokeTitleError ? styles.formLabelError : styles.formLabel }>Názov vtipu (povinné)</Text>
         <TextInput 
           value={this.state.joke.title}
+          autoCorrect={true}
           style={ this.state.jokeTitleError ? styles.formError : styles.form } 
           maxLength={254}
           onChangeText={(jokeTitle) => this.setState({
@@ -67,6 +69,7 @@ export default class NewJokeScreen extends React.Component {
         <TextInput 
           value={this.state.joke.description}
           style={styles.form} 
+          autoCorrect={true}
           onChangeText={(jokeDescription) => this.setState({
             joke: {
               id: this.state.joke.id,
@@ -84,6 +87,7 @@ export default class NewJokeScreen extends React.Component {
         <Text style={ this.state.jokeBodyError ? styles.formLabelError : styles.formLabel }>Vtip</Text>
         <TextInput 
           value={this.state.joke.body}
+          autoCorrect={true}
           style={ this.state.jokeBodyError ? styles.formError : styles.form } 
           multiline={true} 
           onChangeText={(jokeBody) => this.setState({
@@ -137,19 +141,21 @@ export default class NewJokeScreen extends React.Component {
             </View>
           </TouchableOpacity>
         </View>
-
-        <TouchableOpacity
-          onPress={() => this.submit()}>
-          <View style={styles.submitButton}>
-            <Text style={styles.submitText}>UROB HUMOR!</Text>
-          </View>
-        </TouchableOpacity>
-      </ScrollView>
+        { this.state.submitting ?
+          <ActivityIndicator size='large' color='orange' />
+          :
+          <TouchableOpacity
+            onPress={() => this.submit()}>
+            <View style={styles.submitButton}>
+              <Text style={styles.submitText}>UROB HUMOR!</Text>
+            </View>
+          </TouchableOpacity>
+        }
+        </ScrollView>
     )
   }
 
   getImage() {
-    console.debug('fungujem')
     Permissions.askAsync(Permissions.CAMERA_ROLL)
       .then(perm => {
         if (perm.status == 'granted') {
@@ -185,8 +191,11 @@ export default class NewJokeScreen extends React.Component {
     })
     if (this.state.jokeBodyError || this.state.jokeTitleError || this.state.jokeTitleError) return
 
-
+    
     AsyncStorage.getItem('apiToken').then((apiToken) => {
+      this.setState({
+        submitting: true
+      })
       fetch(Expo.Constants.manifest.extra.server + '/api/vtip/uloz', {
         method: 'POST',
         headers: {
@@ -198,7 +207,7 @@ export default class NewJokeScreen extends React.Component {
           nazov: this.state.joke.title,
           popis: this.state.joke.description,
           telo: this.state.joke.body,
-          obrazok: 'data:image/png;base64,' + this.state.jokeImageB64
+          obrazok: this.state.jokeImageB64 == null ? '' : 'data:image/png;base64,' + this.state.jokeImageB64
         }),
       }).then(response => {
         if (response.ok) {
@@ -207,6 +216,9 @@ export default class NewJokeScreen extends React.Component {
         }
       }).catch(error => {
         console.error(error)
+        this.setState({
+          submitting: false
+        })
         alert('Odosielanie zlyhalo!')
       })
     })
@@ -225,8 +237,8 @@ const initialState = {
   },
   jokeTitleError: false,
   jokeBodyError: false,
-  jokeImageUri: null,
-  jokeImageB64: null
+  jokeImageB64: null,
+  submitting: false
 }
 
 const styles = StyleSheet.create({
