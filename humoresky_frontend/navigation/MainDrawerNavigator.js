@@ -25,19 +25,9 @@ LoginStack.navigationOptions = {
   drawerLabel: 'Prihlásenie',
 };
 
-const NewJokeStack = createStackNavigator({
-  NewJoke: NewJokeScreen,
-});
-
-NewJokeStack.navigationOptions = {
-  drawerLabel: 'Pridať vtip',
-  params: {}
-};
-
 export default createDrawerNavigator({
   HomeStack,
-  LoginStack,
-  //NewJokeStack,
+  LoginStack
 },{
   drawerBackgroundColor: '#505050',
   contentOptions: {

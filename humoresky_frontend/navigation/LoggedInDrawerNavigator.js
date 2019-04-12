@@ -4,6 +4,7 @@ import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
 
 import HomeScreen from '../screens/HomeScreen';
 import NewJokeScreen from '../screens/NewJokeScreen';
+import MyCollectionScreen from '../screens/MyCollectionScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -39,9 +40,27 @@ NewJokeStack.navigationOptions = {
   drawerLabel: 'Pridať vtip',
 };
 
+const MyCollectionStack = createStackNavigator({
+  MyCollection: MyCollectionScreen,
+},{
+  defaultNavigationOptions: {
+    headerRight: <Text style={{
+      color: 'orange',
+      textAlign: 'center',
+      textAlignVertical: 'center',
+      marginRight: 10
+    }}>Prihlásený</Text>
+  }
+});
+
+MyCollectionStack.navigationOptions = {
+  drawerLabel: 'Moje vtipy',
+};
+
 export default createDrawerNavigator({
   HomeStack,
   NewJokeStack,
+  MyCollectionStack
 },{
   drawerBackgroundColor: '#505050',
   contentOptions: {
