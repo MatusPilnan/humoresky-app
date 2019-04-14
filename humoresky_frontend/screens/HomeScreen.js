@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import JokeCard from '../components/JokeCard';
+import MyJokeCard from '../components/MyJokeCard';
 import HeaderButton from '../components/HeaderButton';
 
 export default class HomeScreen extends React.Component {

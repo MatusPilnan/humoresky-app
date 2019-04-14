@@ -15,12 +15,19 @@ class JokeController extends Controller
      */
     public function index(Request $request)
     {
+        error_log('rob nieco');
         if (auth()->user())
+        {
+            error_log('Whaddup');
             $jokes = Joke::where('user_id', '==', Auth::id())->orderBy('created_at', 'desc')->paginate(10);
-        else
+            return response($jokes->toJson(), 200, ['Content-Type' => 'application/json']);
+        } 
+        /*else {
+            error_log('napicu');
             $jokes = Joke::orderBy('created_at', 'desc')->paginate(10);
+        }   
 
-        return response($jokes->toJson(), 200, ['Content-Type' => 'application/json']);
+        return response($jokes->toJson(), 200, ['Content-Type' => 'application/json']);*/
     }
 
     /**
