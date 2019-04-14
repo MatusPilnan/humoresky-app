@@ -29,7 +29,8 @@ export default class HomeScreen extends React.Component {
       jokes: [], 
       refreshing: true,
       fetching: false,
-      page: 1
+      page: 1,
+      pages: 1
     }
   }
 
@@ -49,7 +50,7 @@ export default class HomeScreen extends React.Component {
         keyExtractor={(item, index) => String(item.id)}
         renderItem={({item}) => <JokeCard joke={transform(item)} />}
         ListEmptyComponent={() => this.emptyList()}
-        ListFooterComponent={(this.state.fetching || this.state.refreshing) ? <ActivityIndicator size='large' color='white' /> : null}
+        ListFooterComponent={((this.state.fetching && this.state.pages > this.state.page)|| this.state.refreshing) ? <ActivityIndicator size='large' color='white' /> : null}
       />
     );
   }
@@ -61,12 +62,13 @@ export default class HomeScreen extends React.Component {
       this.setState({
         jokes: json.data,
         refreshing: false,
-        page: 1
+        page: 1,
+        pages: json.last_page
       })
       return json.data
     })
     .catch((error) => {
-      console.debug(error)
+      //console.debug(error)
       this.setState({
         refreshing: false,
       })
@@ -81,7 +83,8 @@ export default class HomeScreen extends React.Component {
         this.setState({
           jokes: this.state.jokes.concat(json.data),
           page: this.state.page + 1,
-          fetching: false
+          fetching: false,
+          pages: json.last_page
         })
       }
       this.setState({
@@ -89,7 +92,7 @@ export default class HomeScreen extends React.Component {
       })
     })
     .catch((error) => {
-      console.debug(error)
+      //console.debug(error)
       this.setState({
         fetching: false,
       })
@@ -123,7 +126,7 @@ export default class HomeScreen extends React.Component {
   }
 
   onFetchMore() {
-    if (this.state.fetching) return
+    if (this.state.fetching || (this.state.pages <= this.state.page)) return
     this.setState({fetching: true}, function () { this.getMoreJokes() })
   }
 }
