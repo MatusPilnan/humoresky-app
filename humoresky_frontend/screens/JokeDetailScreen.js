@@ -3,8 +3,9 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
+  Dimensions
 } from 'react-native';
+import Image from 'react-native-scalable-image'
 
 import HeaderButton from '../components/HeaderButton';
 
@@ -33,8 +34,8 @@ export default class JokeDetailScreen extends React.Component {
           <View style={styles.innerContainer}>
             <Text style={styles.title}>{this.state.joke.title}</Text>
             <Image
-                style={styles.image}
-                resizeMode= "contain"
+                //style={styles.image}
+                width={Dimensions.get('window').width}
                 source={(typeof this.state.joke.picture !== "undefined" && this.state.joke.picture != null && this.state.joke.picture != 'data:image/png;base64,') ? { uri: this.state.joke.picture } : require('../assets/images/lol-512.png')}
             />
             <View style={{/* flex: 1,*/ /*flexDirection: 'row',*/ /*justifyContent: 'space-between'*/ }}>
