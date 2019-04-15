@@ -20,6 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //zobrazovanie a v indexovanie vtipu
 Route::get('/vtip', 'JokeController@show');
 Route::get('/vtipy', 'JokeController@index');
+Route::middleware('auth:api')->get('/moje_vtipy', 'JokeController@indexAuth');
 
 //prihlasovanie
 Route::post('/login', 'Auth\ApiLoginController@apiLogin');

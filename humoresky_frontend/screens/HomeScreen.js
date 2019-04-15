@@ -90,7 +90,6 @@ export default class HomeScreen extends React.Component {
       })
     })
     .catch((error) => {
-      console.debug(error)
       this.setState({
         fetching: false,
       })

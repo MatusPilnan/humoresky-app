@@ -15,19 +15,24 @@ class JokeController extends Controller
      */
     public function index(Request $request)
     {
-        error_log('rob nieco');
+        $jokes = Joke::orderBy('created_at', 'desc')->paginate(10);
+        return response($jokes->toJson(), 200, ['Content-Type' => 'application/json']);
+    }
+
+    /**
+     * Display a listing of my jokes.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexAuth(Request $request)
+    {
         if (auth()->user())
         {
-            error_log('Whaddup');
-            $jokes = Joke::where('user_id', '==', Auth::id())->orderBy('created_at', 'desc')->paginate(10);
+            $jokes = Joke::where('user_id', '=', Auth::id())->orderBy('created_at', 'desc')->paginate(10);
             return response($jokes->toJson(), 200, ['Content-Type' => 'application/json']);
-        } 
-        /*else {
-            error_log('napicu');
-            $jokes = Joke::orderBy('created_at', 'desc')->paginate(10);
-        }   
-
-        return response($jokes->toJson(), 200, ['Content-Type' => 'application/json']);*/
+        }
+        
+        return response()->json(['message' => 'Neprihlaseny!'], 401);
     }
 
     /**
@@ -94,7 +99,7 @@ class JokeController extends Controller
                 'nazov' => 'required',
                 'popis' => 'nullable',
                 'telo' => 'required_without:obrazok',
-                'obrazok' => 'required_without:telo|image'
+                'obrazok' => 'required_without:telo'
             ]);
             $joke = Joke::find($overene['joke']);
             if (is_null($joke)) {

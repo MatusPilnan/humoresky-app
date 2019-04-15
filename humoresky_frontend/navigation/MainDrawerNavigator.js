@@ -6,10 +6,12 @@ import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import NewJokeScreen from '../screens/NewJokeScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import JokeDetailScreen from '../screens/JokeDetailScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
   Login: LoginScreen,
+  JokeDetail: JokeDetailScreen,
 });
 
 HomeStack.navigationOptions = {
@@ -27,7 +29,7 @@ LoginStack.navigationOptions = {
 
 export default createDrawerNavigator({
   HomeStack,
-  LoginStack
+  LoginStack,
 },{
   drawerBackgroundColor: '#505050',
   contentOptions: {

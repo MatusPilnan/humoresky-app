@@ -5,6 +5,8 @@ import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
 import HomeScreen from '../screens/HomeScreen';
 import NewJokeScreen from '../screens/NewJokeScreen';
 import MyCollectionScreen from '../screens/MyCollectionScreen';
+import UpdateScreen from '../screens/UpdateScreen';
+import JokeDetailScreen from '../screens/JokeDetailScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -42,6 +44,8 @@ NewJokeStack.navigationOptions = {
 
 const MyCollectionStack = createStackNavigator({
   MyCollection: MyCollectionScreen,
+  Update: UpdateScreen,
+  JokeDetail: JokeDetailScreen,
 },{
   defaultNavigationOptions: {
     headerRight: <Text style={{

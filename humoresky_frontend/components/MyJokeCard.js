@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Image, Text, TouchableOpacity, StyleSheet, AsyncStorage, Alert } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, AsyncStorage, Alert } from 'react-native'
 import { withNavigation } from 'react-navigation'
 
 import JokeCard from '../components/JokeCard';
@@ -16,7 +16,7 @@ class MyJokeCard extends React.Component {
         <JokeCard joke={this.state.joke}/>
         <View style={styles.buttons}>
           <TouchableOpacity style={styles.updateButton}
-            onPress={() => this.submit()}>
+            onPress={() => this.update()}>
             <View>
               <Text style={styles.updateText}>Upraviť</Text>
             </View>
@@ -44,25 +44,35 @@ class MyJokeCard extends React.Component {
   }
 
   delete() {
-    fetch(Expo.Constants.manifest.extra.server + '/api/vtip/vymaz', {
-      method: 'DELETE',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+ apiToken
-      },
-    }).then(response => {
-      if (response.ok) {
-        this.props.navigation.navigate('Home')
-        alert('Úspešne vymazaný!')
-      }
-    }).catch(error => {
-      console.error(error)
-      this.setState({
-        submitting: false
+    AsyncStorage.getItem('apiToken').then((apiToken) => {
+      fetch(Expo.Constants.manifest.extra.server + '/api/vtip/vymaz', {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer '+ apiToken
+        },
+        body: JSON.stringify({
+          joke: this.state.joke.id
+        })
+      }).then(response => {
+        if (response.ok) {
+          this.props.navigation.navigate('MyCollection')
+          alert('Úspešne vymazaný!')
+        }
+      }).catch(error => {
+        console.error(error)
+        this.setState({
+          submitting: false
+        })
+        alert('Mazanie zlyhalo!')
       })
-      alert('Mazanie zlyhalo!')
     })
+  }
+
+  update() {
+    //this.props.navigator.push({name: 'Update', passProps: {joke: this.state.joke}})
+    this.props.navigation.navigate('Update', {joke: this.state.joke})
   }
 }
 

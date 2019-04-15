@@ -57,8 +57,13 @@ export default class HomeScreen extends React.Component {
     
     getJokes() {
       AsyncStorage.getItem('apiToken').then((apiToken) => {
-        console.debug(apiToken)
-        return fetch(Expo.Constants.manifest.extra.server + '/api/vtipy?api_token=' + apiToken)
+        return fetch(Expo.Constants.manifest.extra.server + '/api/moje_vtipy', {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+ apiToken
+          }})
         .then((response) => response.json())
         .then((json) => {
           this.setState({
@@ -69,7 +74,6 @@ export default class HomeScreen extends React.Component {
           return json.data
         })
         .catch((error) => {
-          console.debug(error)
           this.setState({
             refreshing: false,
           })
@@ -78,24 +82,32 @@ export default class HomeScreen extends React.Component {
     }
   
     getMoreJokes() {
-      return fetch(Expo.Constants.manifest.extra.server + '/api/vtipy?page=' + (this.state.page + 1))
-      .then((response) => response.json())
-      .then((json) => {
-        if (json.data.length > 0) {
+      AsyncStorage.getItem('apiToken').then((apiToken) => {
+        return fetch(Expo.Constants.manifest.extra.server + '/api/moje_vtipy?page=' + (this.state.page + 1), {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+ apiToken
+          }})
+        .then((response) => response.json())
+        .then((json) => {
+          if (json.data.length > 0) {
+            this.setState({
+              jokes: this.state.jokes.concat(json.data),
+              page: this.state.page + 1,
+              fetching: false
+            })
+          }
           this.setState({
-            jokes: this.state.jokes.concat(json.data),
-            page: this.state.page + 1,
             fetching: false
           })
-        }
-        this.setState({
-          fetching: false
         })
-      })
-      .catch((error) => {
-        console.debug(error)
-        this.setState({
-          fetching: false,
+        .catch((error) => {
+          console.debug(error)
+          this.setState({
+            fetching: false,
+          })
         })
       })
     }

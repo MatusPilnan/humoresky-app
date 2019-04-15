@@ -1,14 +1,14 @@
 import React from 'react';
-import { ScrollView, TouchableOpacity, View, TextInput, Text, StyleSheet, CameraRoll, Image, AsyncStorage, ActivityIndicator  } from 'react-native';
+import { ScrollView, TouchableOpacity, View, TextInput, Text, StyleSheet, Image, AsyncStorage, ActivityIndicator  } from 'react-native';
 import { Permissions, ImagePicker } from 'expo'
 import { NavigationEvents } from 'react-navigation'
 
 import HeaderButton from '../components/HeaderButton';
 
-export default class NewJokeScreen extends React.Component {
+export default class UpdateScreen extends React.Component {
   static navigationOptions = ({navigation}) => {
     return {
-      title: navigation.getParam('title', 'Nový vtip'),
+      title: navigation.getParam('title', 'Upraviť vtip'),
       headerStyle: {
         backgroundColor: "#505050"
       },
@@ -23,6 +23,7 @@ export default class NewJokeScreen extends React.Component {
   constructor(props) {
     super(props)
     this.state = initialState
+    this.state.joke = this.props.navigation.getParam('joke', initialState.joke)
   }
 
   clear() {
@@ -147,7 +148,7 @@ export default class NewJokeScreen extends React.Component {
           <TouchableOpacity
             onPress={() => this.submit()}>
             <View style={styles.submitButton}>
-              <Text style={styles.submitText}>UROB HUMOR!</Text>
+              <Text style={styles.submitText}>Upraviť vtip</Text>
             </View>
           </TouchableOpacity>
         }
@@ -196,7 +197,8 @@ export default class NewJokeScreen extends React.Component {
       this.setState({
         submitting: true
       })
-      fetch(Expo.Constants.manifest.extra.server + '/api/vtip/uloz', {
+      console.debug(this.state.joke.id)
+      fetch(Expo.Constants.manifest.extra.server + '/api/vtip/uprav', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -204,6 +206,7 @@ export default class NewJokeScreen extends React.Component {
           'Authorization': 'Bearer '+ apiToken
         },
         body: JSON.stringify({
+          joke: this.state.joke.id,
           nazov: this.state.joke.title,
           popis: this.state.joke.description,
           telo: this.state.joke.body,
@@ -212,7 +215,12 @@ export default class NewJokeScreen extends React.Component {
       }).then(response => {
         if (response.ok) {
           this.props.navigation.navigate('MyCollection')
-          alert('Úspešne uložený!')
+          alert('Úspešne upravený!')
+        }
+        else {
+          console.debug(response)
+          //this.props.navigation.navigate('MyCollection')
+          alert('neúspešne upravený!')
         }
       }).catch(error => {
         console.error(error)

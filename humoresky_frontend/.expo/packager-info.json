@@ -1,10 +1,9 @@
 {
   "packagerPort": 19001,
-  "packagerPid": 9408,
+  "packagerPid": 1664,
   "expoServerNgrokUrl": "https://fx-itx.anonymous.humoresky-frontend.exp.direct",
   "packagerNgrokUrl": "https://packager.fx-itx.anonymous.humoresky-frontend.exp.direct",
-  "ngrokPid": 428,
-  "webpackServerPort": null,
+  "ngrokPid": 16628,
   "devToolsPort": 19002,
   "expoServerPort": 19000
 }
