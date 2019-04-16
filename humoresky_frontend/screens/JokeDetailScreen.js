@@ -4,9 +4,11 @@ import {
   Text,
   View,
   Dimensions,
-  ScrollView
+  ScrollView,
+  AsyncStorage
 } from 'react-native';
 import Image from 'react-native-scalable-image'
+import { AirbnbRating, Rating } from 'react-native-ratings'
 
 import HeaderButton from '../components/HeaderButton';
 
@@ -43,8 +45,19 @@ export default class JokeDetailScreen extends React.Component {
               </View>
               <View style={{/* flex: 1,*/ /*flexDirection: 'row',*/ /*justifyContent: 'space-between'*/ }}>
                   <View style={styles.rating}>
-                    <Text style={styles.text}>{String(this.state.joke.rating)}</Text>
-                    <Image source={require('../assets/images/star.png')} />
+                    <AirbnbRating 
+                      minValue={1}
+                      type='custom'
+                      tintColor='black'
+                      reviews={['😤', '🤔', '😐', '😅', '😂']}
+                      ratingBackgroundColor='grey'
+                      showRating
+                      defaultRating={this.state.joke.rating}
+                      onFinishRating={rating => this.rate(rating)}
+                      fractions={1}
+                    />
+                    {/* <Text style={styles.text}>{String(this.state.joke.rating)}</Text>
+                    <Image source={require('../assets/images/star.png')} /> */}
                 </View>
               </View>
               <Text style={styles.text}>{this.state.joke.description}</Text>
@@ -54,6 +67,48 @@ export default class JokeDetailScreen extends React.Component {
         </ScrollView>
       );
     }
+
+    rate(rating) {
+      console.debug(rating)
+      AsyncStorage.getItem('apiToken').then((apiToken) => {
+        fetch(Expo.Constants.manifest.extra.server + '/api/vtip/hodnotenie', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+ apiToken
+          },
+          body: JSON.stringify({
+            rating: rating,
+            joke: this.state.joke.id
+          }),
+        }).then(response => {
+          if (response.ok) {
+            this.setState({
+              joke: {
+                id: this.state.joke.id,
+                title: this.state.joke.title,
+                description: this.state.joke.description,
+                body: this.state.joke.body,
+                rating: rating,
+                picture: this.state.picture,
+                user_id: this.state.joke.user_id
+              }
+            })
+            
+          } else {
+            alert('Pre zadanie hodnotenia musíš byť prihlásený')
+          }
+        }).catch(error => {
+          console.error(error)
+          alert('Odosielanie zlyhalo!')
+        })
+      }).catch(error => {
+        alert('Neauth')
+        console.error(error)
+      })
+    }
+
   }
   
   const initialState = {
@@ -95,6 +150,7 @@ export default class JokeDetailScreen extends React.Component {
     },
     rating: {
       flexDirection: 'row',
+      justifyContent: 'center',
     },
     text: {
       color: 'white',

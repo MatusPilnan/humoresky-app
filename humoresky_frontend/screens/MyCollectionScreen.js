@@ -8,6 +8,7 @@ import {
   FlatList,
   AsyncStorage,
 } from 'react-native';
+import { NavigationEvents } from 'react-navigation'
 
 import MyJokeCard from '../components/MyJokeCard';
 import HeaderButton from '../components/HeaderButton';
@@ -49,6 +50,7 @@ export default class HomeScreen extends React.Component {
           refreshing={this.state.refreshing}
           keyExtractor={(item, index) => String(item.id)}
           renderItem={({item}) => <MyJokeCard joke={transform(item)} />}
+          ListHeaderComponent={<NavigationEvents onDidFocus={() => this.onRefresh()} />}
           ListEmptyComponent={() => this.emptyList()}
           ListFooterComponent={(this.state.fetching || this.state.refreshing) ? <ActivityIndicator size='large' color='white' /> : null}
         />
