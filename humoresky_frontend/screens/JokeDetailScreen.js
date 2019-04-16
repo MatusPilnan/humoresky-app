@@ -3,7 +3,8 @@ import {
   StyleSheet,
   Text,
   View,
-  Dimensions
+  Dimensions,
+  ScrollView
 } from 'react-native';
 import Image from 'react-native-scalable-image'
 
@@ -30,24 +31,27 @@ export default class JokeDetailScreen extends React.Component {
   
     render() {
       return (
-        <View style={styles.container}>
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>{this.state.joke.title}</Text>
-            <Image
-                //style={styles.image}
-                width={Dimensions.get('window').width}
-                source={(typeof this.state.joke.picture !== "undefined" && this.state.joke.picture != null && this.state.joke.picture != 'data:image/png;base64,') ? { uri: this.state.joke.picture } : require('../assets/images/lol-512.png')}
-            />
-            <View style={{/* flex: 1,*/ /*flexDirection: 'row',*/ /*justifyContent: 'space-between'*/ }}>
-                <View style={styles.rating}>
-                  <Text style={styles.text}>{String(this.state.joke.rating)}</Text>
-                  <Image source={require('../assets/images/star.png')} />
+        <ScrollView style={styles.container}>
+          <View>
+            <View style={styles.innerContainer}>
+              <Text style={styles.title}>{this.state.joke.title}</Text>
+              <View style={styles.image}>
+              <Image
+                  width={Dimensions.get('window').width - 24}
+                  source={(typeof this.state.joke.picture !== "undefined" && this.state.joke.picture != null && this.state.joke.picture != 'data:image/png;base64,') ? { uri: this.state.joke.picture } : require('../assets/images/lol-512.png')}
+              />
               </View>
+              <View style={{/* flex: 1,*/ /*flexDirection: 'row',*/ /*justifyContent: 'space-between'*/ }}>
+                  <View style={styles.rating}>
+                    <Text style={styles.text}>{String(this.state.joke.rating)}</Text>
+                    <Image source={require('../assets/images/star.png')} />
+                </View>
+              </View>
+              <Text style={styles.text}>{this.state.joke.description}</Text>
+              <Text style={styles.text}>{this.state.joke.body}</Text>
             </View>
-            <Text style={styles.text}>{this.state.joke.description}</Text>
-            <Text style={styles.text}>{this.state.joke.body}</Text>
           </View>
-        </View>
+        </ScrollView>
       );
     }
   }
@@ -71,13 +75,15 @@ export default class JokeDetailScreen extends React.Component {
     },
     innerContainer: {
       flex: 1,
+      //flexDirection: 'row',
+      //justifyContent: 'center',
       margin: 5,
       padding: 5,
     },
     image: {
-      flex: 1,
-      width: '100%',
-      height: null,
+      //flex: 1,
+      //width: 50,
+      //height: 50,
       borderColor: 'gray',
       borderWidth: 2,
       borderRadius: 5

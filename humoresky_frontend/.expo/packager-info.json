@@ -1,9 +1,9 @@
 {
-  "packagerPort": 19001,
-  "packagerPid": 21384,
+  "packagerPort": null,
+  "packagerPid": null,
   "expoServerNgrokUrl": "https://jz-p2g.anonymous.humoresky-frontend.exp.direct",
   "packagerNgrokUrl": "https://packager.jz-p2g.anonymous.humoresky-frontend.exp.direct",
-  "ngrokPid": 31176,
+  "ngrokPid": 20964,
   "devToolsPort": 19002,
   "expoServerPort": 19000
 }
