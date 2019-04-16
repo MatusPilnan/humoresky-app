@@ -35,19 +35,22 @@ export default class AuthScreen extends React.Component {
   }
 
   logout() {
-    AsyncStorage.removeItem('api_token').then(() => {
+    AsyncStorage.removeItem('apiToken').then(() => {
       this.props.navigation.navigate('Main')
     })
   }
 
   getAuth() {
-    AsyncStorage.getItem('api_token').then(api_token => {
-      if (api_token != null) {
+    AsyncStorage.getItem('apiToken').then(apiToken => {
+      if (apiToken != null) {
+        console.debug('token not null ' + apiToken)
         this.props.navigation.navigate('LoggedIn')
       } else {
+        console.debug('token null ' +apiToken)
         this.props.navigation.navigate('Guest')
       }
     }).catch(() => {
+      console.debug('catch')
       this.props.navigation.navigate('Guest')
     })
   }

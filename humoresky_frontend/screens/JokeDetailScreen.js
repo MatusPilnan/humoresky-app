@@ -8,7 +8,7 @@ import {
   AsyncStorage
 } from 'react-native';
 import Image from 'react-native-scalable-image'
-import { AirbnbRating } from 'react-native-ratings'
+import { AirbnbRating, Rating } from 'react-native-ratings'
 
 import HeaderButton from '../components/HeaderButton';
 
@@ -95,7 +95,9 @@ export default class JokeDetailScreen extends React.Component {
                 user_id: this.state.joke.user_id
               }
             })
-
+            
+          } else {
+            alert('Pre zadanie hodnotenia musíš byť prihlásený')
           }
         }).catch(error => {
           console.error(error)
