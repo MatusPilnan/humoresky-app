@@ -4,7 +4,8 @@ import {
   Text,
   View,
   Dimensions,
-  ScrollView
+  ScrollView,
+  AsyncStorage
 } from 'react-native';
 import Image from 'react-native-scalable-image'
 import { AirbnbRating } from 'react-native-ratings'
@@ -69,6 +70,41 @@ export default class JokeDetailScreen extends React.Component {
 
     rate(rating) {
       console.debug(rating)
+      AsyncStorage.getItem('apiToken').then((apiToken) => {
+        fetch(Expo.Constants.manifest.extra.server + '/api/vtip/hodnotenie', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+ apiToken
+          },
+          body: JSON.stringify({
+            rating: rating,
+            joke: this.state.joke.id
+          }),
+        }).then(response => {
+          if (response.ok) {
+            this.setState({
+              joke: {
+                id: this.state.joke.id,
+                title: this.state.joke.title,
+                description: this.state.joke.description,
+                body: this.state.joke.body,
+                rating: rating,
+                picture: this.state.picture,
+                user_id: this.state.joke.user_id
+              }
+            })
+
+          }
+        }).catch(error => {
+          console.error(error)
+          alert('Odosielanie zlyhalo!')
+        })
+      }).catch(error => {
+        alert('Neauth')
+        console.error(error)
+      })
     }
 
   }
