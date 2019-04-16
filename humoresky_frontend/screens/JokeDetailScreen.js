@@ -7,6 +7,7 @@ import {
   ScrollView
 } from 'react-native';
 import Image from 'react-native-scalable-image'
+import { AirbnbRating } from 'react-native-ratings'
 
 import HeaderButton from '../components/HeaderButton';
 
@@ -43,8 +44,19 @@ export default class JokeDetailScreen extends React.Component {
               </View>
               <View style={{/* flex: 1,*/ /*flexDirection: 'row',*/ /*justifyContent: 'space-between'*/ }}>
                   <View style={styles.rating}>
-                    <Text style={styles.text}>{String(this.state.joke.rating)}</Text>
-                    <Image source={require('../assets/images/star.png')} />
+                    <AirbnbRating 
+                      minValue={1}
+                      type='custom'
+                      tintColor='black'
+                      reviews={['😤', '🤔', '😐', '😅', '😂']}
+                      ratingBackgroundColor='grey'
+                      showRating
+                      defaultRating={this.state.joke.rating}
+                      onFinishRating={rating => this.rate(rating)}
+                      fractions={1}
+                    />
+                    {/* <Text style={styles.text}>{String(this.state.joke.rating)}</Text>
+                    <Image source={require('../assets/images/star.png')} /> */}
                 </View>
               </View>
               <Text style={styles.text}>{this.state.joke.description}</Text>
@@ -54,6 +66,11 @@ export default class JokeDetailScreen extends React.Component {
         </ScrollView>
       );
     }
+
+    rate(rating) {
+      console.debug(rating)
+    }
+
   }
   
   const initialState = {
@@ -95,6 +112,7 @@ export default class JokeDetailScreen extends React.Component {
     },
     rating: {
       flexDirection: 'row',
+      justifyContent: 'center',
     },
     text: {
       color: 'white',
