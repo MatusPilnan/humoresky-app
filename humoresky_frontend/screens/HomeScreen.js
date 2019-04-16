@@ -7,6 +7,7 @@ import {
   View,
   FlatList,
 } from 'react-native';
+import { NavigationEvents } from 'react-navigation'
 
 import JokeCard from '../components/JokeCard';
 import MyJokeCard from '../components/MyJokeCard';
@@ -41,18 +42,20 @@ export default class HomeScreen extends React.Component {
 
   render() {
     return (
-      <FlatList
-        style={styles.container}
-        data={this.state.jokes}
-        onRefresh={() => this.onRefresh()}
-        onEndReached={() => this.onFetchMore()}
-        onEndReachedThreshold={0.2}
-        refreshing={this.state.refreshing}
-        keyExtractor={(item, index) => String(item.id)}
-        renderItem={({item}) => <JokeCard joke={transform(item)} />}
-        ListEmptyComponent={() => this.emptyList()}
-        ListFooterComponent={((this.state.fetching && this.state.pages > this.state.page)|| this.state.refreshing) ? <ActivityIndicator size='large' color='white' /> : null}
-      />
+        
+        <FlatList
+          style={styles.container}
+          data={this.state.jokes}
+          onRefresh={() => this.onRefresh()}
+          onEndReached={() => this.onFetchMore()}
+          onEndReachedThreshold={0.2}
+          refreshing={this.state.refreshing}
+          keyExtractor={(item, index) => String(item.id)}
+          renderItem={({item}) => <JokeCard joke={transform(item)} />}
+          ListHeaderComponent={<NavigationEvents onDidFocus={() => this.onRefresh()} />}
+          ListEmptyComponent={() => this.emptyList()}
+          ListFooterComponent={((this.state.fetching && this.state.pages > this.state.page)|| this.state.refreshing) ? <ActivityIndicator size='large' color='white' /> : null}
+          />
     );
   }
   
