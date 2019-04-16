@@ -7,6 +7,7 @@ import NewJokeScreen from '../screens/NewJokeScreen';
 import MyCollectionScreen from '../screens/MyCollectionScreen';
 import UpdateScreen from '../screens/UpdateScreen';
 import JokeDetailScreen from '../screens/JokeDetailScreen';
+import AuthScreen from '../screens/AuthScreen'
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -64,7 +65,14 @@ MyCollectionStack.navigationOptions = {
 export default createDrawerNavigator({
   HomeStack,
   NewJokeStack,
-  MyCollectionStack
+  MyCollectionStack,
+  Logout: {
+    screen: AuthScreen,
+    params: {logout: true},
+    navigationOptions: {
+      title: 'Odhlásenie'
+    }
+  }
 },{
   drawerBackgroundColor: '#505050',
   contentOptions: {
