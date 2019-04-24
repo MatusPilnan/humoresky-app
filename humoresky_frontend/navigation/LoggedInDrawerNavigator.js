@@ -11,6 +11,7 @@ import AuthScreen from '../screens/AuthScreen'
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
+  JokeDetail: JokeDetailScreen,
 },{
   defaultNavigationOptions: {
     headerRight: <Text style={{

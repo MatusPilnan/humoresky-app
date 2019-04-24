@@ -15,7 +15,7 @@ import HeaderButton from '../components/HeaderButton';
 
 export default class HomeScreen extends React.Component {
     static navigationOptions = {
-      title: "Humoresky 😂😂😂",
+      title: "Moje vtipy 😂😂😂",
       headerStyle: {
         backgroundColor: "#505050"
       },

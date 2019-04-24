@@ -95,7 +95,7 @@ export default class JokeDetailScreen extends React.Component {
                 user_id: this.state.joke.user_id
               }
             })
-            
+            alert('Hodnotenie uložené!')
           } else {
             alert('Pre zadanie hodnotenia musíš byť prihlásený')
           }
