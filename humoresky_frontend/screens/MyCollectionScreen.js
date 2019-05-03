@@ -7,6 +7,7 @@ import {
   View,
   FlatList,
   AsyncStorage,
+  
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation'
 
@@ -31,7 +32,9 @@ export default class HomeScreen extends React.Component {
         jokes: [], 
         refreshing: true,
         fetching: false,
-        page: 1
+        page: 1,
+        pages: 1,
+        offline: 0
       }
     }
   
@@ -48,16 +51,39 @@ export default class HomeScreen extends React.Component {
           onEndReached={() => this.onFetchMore()}
           onEndReachedThreshold={0.2}
           refreshing={this.state.refreshing}
-          keyExtractor={(item, index) => String(item.id)}
+          keyExtractor={(item) => String(item.id)}
           renderItem={({item}) => <MyJokeCard joke={transform(item)} />}
-          ListHeaderComponent={<NavigationEvents onDidFocus={() => this.onRefresh()} />}
+          ListHeaderComponent={
+          <Text style={{color: 'white', textAlign: 'center'}}>
+            <NavigationEvents onDidFocus={() => this.onRefresh()} />
+            { this.state.offline == 0 ? '': this.awaitingUploadMsg() }
+          </Text>
+        }
           ListEmptyComponent={() => this.emptyList()}
-          ListFooterComponent={(this.state.fetching || this.state.refreshing) ? <ActivityIndicator size='large' color='white' /> : null}
+          ListFooterComponent={((this.state.fetching && this.state.pages > this.state.page)|| this.state.refreshing) ? <ActivityIndicator size='large' color='white' /> : null}
         />
       );
     }
     
     getJokes() {
+      AsyncStorage.getItem('offlineJokes').then((offlineJokes) => {
+        console.debug(offlineJokes)
+        if (offlineJokes != null) {
+          offlineNumber = JSON.parse(offlineJokes).length
+        } else {
+          offlineNumber = 0
+        }
+        this.setState({
+          jokes: [], 
+          refreshing: true,
+          fetching: false,
+          page: 1,
+          pages: 1,
+          offline: offlineNumber
+        })
+      }).catch(() => {
+        console.debug('nejde nacitat z AS')
+      })
       AsyncStorage.getItem('apiToken').then((apiToken) => {
         return fetch(Expo.Constants.manifest.extra.server + '/api/moje_vtipy', {
           method: 'GET',
@@ -71,7 +97,8 @@ export default class HomeScreen extends React.Component {
           this.setState({
             jokes: json.data,
             refreshing: false,
-            page: 1
+            page: 1,
+            pages: json.last_page
           })
           return json.data
         })
@@ -135,13 +162,20 @@ export default class HomeScreen extends React.Component {
         
       )
     }
+
+    awaitingUploadMsg() {
+      if (this.state.offline < 1) return ''
+      if (this.state.offline == 1) return this.state.offline + ' vtip čaká na nahratie.'
+      if (this.state.offline <= 4) return this.state.offline + ' vtipy čakajú na nahratie.'
+      else return this.state.offline + ' vtipov čaká na nahratie.'   
+    }
   
     onRefresh() {
       this.setState({jokes: [], refreshing: true}, function() { this.getJokes() });
     }
   
     onFetchMore() {
-      if (this.state.fetching) return
+      if (this.state.fetching || (this.state.pages <= this.state.page)) return
       this.setState({fetching: true}, function () { this.getMoreJokes() })
     }
   }

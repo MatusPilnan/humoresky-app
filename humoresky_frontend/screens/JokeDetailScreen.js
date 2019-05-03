@@ -91,7 +91,7 @@ export default class JokeDetailScreen extends React.Component {
                 description: this.state.joke.description,
                 body: this.state.joke.body,
                 rating: rating,
-                picture: this.state.picture,
+                picture: this.state.joke.picture,
                 user_id: this.state.joke.user_id
               }
             })

@@ -6,6 +6,8 @@ import {
   Text,
   View,
   FlatList,
+  NetInfo,
+  AsyncStorage
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation'
 
@@ -34,6 +36,9 @@ export default class HomeScreen extends React.Component {
       page: 1,
       pages: 1
     }
+    NetInfo.isConnected.addEventListener(
+      'connectionChange', handleConnectionChange
+    )
   }
 
   componentWillMount() {
@@ -52,7 +57,7 @@ export default class HomeScreen extends React.Component {
           refreshing={this.state.refreshing}
           keyExtractor={(item, index) => String(item.id)}
           renderItem={({item}) => <JokeCard joke={transform(item)} />}
-          ListHeaderComponent={<NavigationEvents onDidFocus={() => this.onRefresh()} />}
+          ListHeaderComponent={<NavigationEvents onWillFocus={() => this.onRefresh()} />}
           ListEmptyComponent={() => this.emptyList()}
           ListFooterComponent={((this.state.fetching && this.state.pages > this.state.page)|| this.state.refreshing) ? <ActivityIndicator size='large' color='white' /> : null}
           />
@@ -131,6 +136,42 @@ export default class HomeScreen extends React.Component {
   onFetchMore() {
     if (this.state.fetching || (this.state.pages <= this.state.page)) return
     this.setState({fetching: true}, function () { this.getMoreJokes() })
+  }
+}
+
+function handleConnectionChange(connected) {
+  if (connected) {
+    AsyncStorage.multiGet(['offlineJokes', 'apiToken'])
+    .then((values) => {
+      console.debug(values)
+      offlineJokes = values[0][1]
+      apiToken = values[1][1]
+      forUpload = JSON.parse(offlineJokes)
+      if (forUpload != null && forUpload.length > 0) {
+        failed = []
+        forUpload.forEach(joke => {
+          fetch(Expo.Constants.manifest.extra.server + '/api/vtip/uloz', {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer '+ apiToken
+            },
+            body: JSON.stringify(joke),
+          }).then(response => {
+            if (response.ok) {
+              alert('Úspešne uložený!')
+            } else {
+              failed.push(joke)
+            }
+          }).catch(error => {
+            alert('Odosielanie zlyhalo!')
+            failed.push(joke)
+          })
+        });
+        AsyncStorage.setItem('offlineJokes', JSON.stringify(failed))
+      }
+    })
   }
 }
 

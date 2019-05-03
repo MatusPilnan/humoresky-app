@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, TouchableOpacity, View, TextInput, Text, StyleSheet, CameraRoll, Image, AsyncStorage, ActivityIndicator  } from 'react-native';
+import { ScrollView, TouchableOpacity, View, TextInput, Text, StyleSheet, Alert, Image, AsyncStorage, ActivityIndicator, NetInfo  } from 'react-native';
 import { Permissions, ImagePicker } from 'expo'
 import { NavigationEvents } from 'react-navigation'
 
@@ -184,6 +184,31 @@ export default class NewJokeScreen extends React.Component {
     
   }
 
+  submitOffline() {
+    // AsyncStorage.removeItem('offlineJokes'); return
+    AsyncStorage.getItem('offlineJokes')
+    .then((offlineJokes) => {     
+      if (offlineJokes == null) {
+        offlineJokes = []
+      } else {
+        offlineJokes = JSON.parse(offlineJokes)
+      }
+      offlineJokes.push({
+        nazov: this.state.joke.title,
+        popis: this.state.joke.description,
+        telo: this.state.joke.body,
+        obrazok:  this.state.joke.picture
+      })
+      AsyncStorage.setItem('offlineJokes', JSON.stringify(offlineJokes))
+      .then(() => {
+        this.props.navigation.navigate('MyCollection')
+        alert('Vtip sa nahrá keď nebudeš mimo pokrytia.')
+      })
+    }).catch((error) => {
+      console.error(error)
+    })
+  }
+
   submit() {
     this.setState({
       jokeTitleError: (this.state.joke.title == ''),
@@ -191,35 +216,46 @@ export default class NewJokeScreen extends React.Component {
     })
     if (this.state.jokeBodyError || this.state.jokeTitleError || this.state.jokeTitleError) return
 
-    
     AsyncStorage.getItem('apiToken').then((apiToken) => {
-      this.setState({
-        submitting: true
-      })
-      fetch(Expo.Constants.manifest.extra.server + '/api/vtip/uloz', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer '+ apiToken
-        },
-        body: JSON.stringify({
-          nazov: this.state.joke.title,
-          popis: this.state.joke.description,
-          telo: this.state.joke.body,
-          obrazok: this.state.jokeImageB64 == null ? '' : 'data:image/png;base64,' + this.state.jokeImageB64
-        }),
-      }).then(response => {
-        if (response.ok) {
-          this.props.navigation.navigate('MyCollection')
-          alert('Úspešne uložený!')
+      NetInfo.isConnected.fetch().then(isConnected => {
+        if (!isConnected) {
+          Alert.alert(
+            'Nepripojený!',
+            'Zapni internet a skús to znova. Alebo máme urobiť vtip keď nebudeš mimo pokrytia?',
+            [
+              {text: 'Nehajte tak, pohoda'},
+              {text: 'Nó poprosím vás', onPress: () => this.submitOffline()}
+            ]
+          )
+        } else{
+          this.setState({
+            submitting: true
+          })
+          fetch(Expo.Constants.manifest.extra.server + '/api/vtip/uloz', {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer '+ apiToken
+            },
+            body: JSON.stringify({
+              nazov: this.state.joke.title,
+              popis: this.state.joke.description,
+              telo: this.state.joke.body,
+              obrazok: this.state.jokeImageB64 == null ? '' : 'data:image/png;base64,' + this.state.jokeImageB64
+            }),
+          }).then(response => {
+            if (response.ok) {
+              this.props.navigation.navigate('MyCollection')
+              alert('Úspešne uložený!')
+            }
+          }).catch(error => {
+            this.setState({
+              submitting: false
+            })
+            alert('Odosielanie zlyhalo!')
+          })
         }
-      }).catch(error => {
-        console.error(error)
-        this.setState({
-          submitting: false
-        })
-        alert('Odosielanie zlyhalo!')
       })
     })
   }
